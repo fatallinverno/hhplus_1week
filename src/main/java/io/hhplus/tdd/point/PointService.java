@@ -17,9 +17,7 @@ public class PointService {
 
     // 2. 포인트 충전 내역 조회
     public List<PointHistory> getPointHistories(long userId) {
-        return pointHistories.stream()
-                .filter(history -> history.userId() == userId)
-                .toList();
+        return pointHistories.stream().filter(history -> history.userId() == userId).toList();
     }
 
     // 3. 포인트 충전
