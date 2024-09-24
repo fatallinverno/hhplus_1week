@@ -1,5 +1,8 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.Controller;
 
+import io.hhplus.tdd.point.PointHistory;
+import io.hhplus.tdd.point.Service.PointService;
+import io.hhplus.tdd.point.UserPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +21,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}")
-    public UserPoint point(@PathVariable long id) throws Exception {
+    public UserPoint point(@PathVariable long id) {
         //return new UserPoint(0, 0, 0);
         return pointService.userPoint(id);
     }
@@ -27,7 +30,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트 충전/이용 내역을 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}/histories")
-    public List<PointHistory> history(@PathVariable long id) throws Exception {
+    public List<PointHistory> history(@PathVariable long id) {
         return pointService.pointHistory(id);
     }
 
@@ -35,7 +38,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public UserPoint charge(@PathVariable long id, @RequestBody long amount) throws Exception {
+    public UserPoint charge(@PathVariable long id, @RequestBody long amount) {
         return pointService.chargePoint(id, amount);
     }
 
@@ -43,7 +46,7 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public UserPoint use(@PathVariable long id, @RequestBody long amount) throws Exception {
+    public UserPoint use(@PathVariable long id, @RequestBody long amount) {
         return pointService.usePoint(id, amount);
     }
 }
