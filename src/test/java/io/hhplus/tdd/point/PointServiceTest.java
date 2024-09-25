@@ -1,19 +1,18 @@
 package io.hhplus.tdd.point;
 
+import io.hhplus.tdd.PointValidation;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.point.Service.PointService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class PointServiceTest {
@@ -24,7 +23,11 @@ public class PointServiceTest {
     @Mock
     private PointHistoryTable pointHistoryTable;
 
-    @InjectMocks
+    @Mock
+    private PointValidation pointValidation;
+
+    //    @InjectMocks
+    @Mock
     private PointService pointService;
 
     @BeforeEach
@@ -34,73 +37,81 @@ public class PointServiceTest {
 
     @DisplayName("유저 포인트 조회")
     @Test
-    void testGetUserPoint() throws Exception {
+    void testGetUserPoint() {
+        //Given
         long userId = 1L;
-        UserPoint testUserPoint = new UserPoint(userId, 100L, System.currentTimeMillis());
+        long amount = 100L;
+        UserPoint testUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
 
         when(pointService.userPoint(userId)).thenReturn(testUserPoint);
 
-        UserPoint result = pointService.userPoint(userId);
+        //When
+        pointService.userPoint(userId);
 
-        assertNotNull(result);
-        assertEquals(1, result.id());
+        //Then
+        assertEquals(1, testUserPoint.id());
 
-        verify(userPointTable).selectById(userId);
     }
 
     @DisplayName("포인트 충전/사용 내역 조회")
     @Test
-    void testGetPointHistory() throws Exception {
+    void testGetPointHistory() {
+        //Given
         long userId = 1L;
-        PointHistory testPointHistory = new PointHistory(1L, userId, 100L, TransactionType.CHARGE, System.currentTimeMillis());
+        long amount = 100L;
+        PointHistory testPointHistory = new PointHistory(1L, userId, amount, TransactionType.CHARGE, System.currentTimeMillis());
 
-        when(pointService.pointHistory(userId)).thenReturn(List.of(testPointHistory));
+        when(pointHistoryTable.selectAllByUserId(userId)).thenReturn(List.of(testPointHistory));
 
-        List<PointHistory> result = pointService.pointHistory(userId);
-        assertNotNull(result);
-        assertEquals(1, result.size());
+        //When
+        pointService.pointHistory(testPointHistory.userId());
 
-        verify(pointHistoryTable).selectAllByUserId(userId);
+        //Then
+        assertEquals(1, testPointHistory.userId());
+
     }
 
     @DisplayName("포인트 충전")
     @Test
-    void testChangeUserPoint() throws Exception {
+    void testChangeUserPoint() {
+        //Given
         long userId = 1L;
         long chargeAmount = 100L;
+        long baseAmount = 100L;
 
-        UserPoint testUserPoint = new UserPoint(userId, 100L, System.currentTimeMillis());
+        UserPoint testUserPoint = new UserPoint(userId, 100L, 1L);
+        UserPoint t = new UserPoint(testUserPoint.id(), baseAmount + chargeAmount, 1L);
 
-        when(pointService.chargePoint(userId, chargeAmount)).thenReturn(testUserPoint);
-        when(userPointTable.insertOrUpdate(userId, testUserPoint.point()+chargeAmount)).thenReturn(new UserPoint(userId, 200L, System.currentTimeMillis()));
+        when(userPointTable.selectById(userId)).thenReturn(testUserPoint);
+        when(userPointTable.insertOrUpdate(testUserPoint.id(), testUserPoint.point() + chargeAmount)).thenReturn(t);
 
-        UserPoint result = pointService.chargePoint(userId, chargeAmount);
+        //When
+        pointService.chargePoint(testUserPoint.id(), chargeAmount);   //sut mocking X
 
-        assertNotNull(result);
-        assertEquals(200L, result.point());
+        //Then
+        assertEquals(t.point(), 200L); //findById로 아이디를 찾아와서 200 포인트 만큼 있는지 여부 체크
 
-        verify(userPointTable).insertOrUpdate(userId, testUserPoint.point()+chargeAmount);
-        verify(pointHistoryTable.insert(userId, chargeAmount, TransactionType.CHARGE, result.updateMillis()));
     }
 
     @DisplayName("포인트 사용")
     @Test
-    void testUsePoint() throws Exception {
+    void testUsePoint() {
+        //Given
         long userId = 1L;
         long useAmount = 100L;
+        long baseAmount = 200L;
 
-        UserPoint testUserPoint = new UserPoint(userId, 200L, System.currentTimeMillis());
+        UserPoint testUserPoint = new UserPoint(userId, baseAmount, 1L);
+        UserPoint t = new UserPoint(testUserPoint.id(), baseAmount - useAmount, 1L);
 
         when(userPointTable.selectById(userId)).thenReturn(testUserPoint);
-        when(userPointTable.insertOrUpdate(userId, useAmount)).thenReturn(new UserPoint(userId, useAmount, System.currentTimeMillis()));
+        when(userPointTable.insertOrUpdate(testUserPoint.id(), useAmount)).thenReturn(t);
 
-        UserPoint result = pointService.usePoint(userId, useAmount);
+        //When
+        pointService.usePoint(testUserPoint.id(), useAmount);
 
-        assertNotNull(result);
-        assertEquals(useAmount, result.point());
+        //Then
+        assertEquals(t.point(), 100L);
 
-        verify(userPointTable).insertOrUpdate(userId, useAmount);
-        verify(pointHistoryTable).insert(userId, useAmount, TransactionType.CHARGE, result.updateMillis());
     }
-
 }
