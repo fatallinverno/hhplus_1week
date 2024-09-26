@@ -4,6 +4,7 @@ import io.hhplus.tdd.point.PointHistory;
 import io.hhplus.tdd.point.UserPoint;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface PointService {
 
@@ -11,8 +12,8 @@ public interface PointService {
 
     List<PointHistory> pointHistory(long userId);
 
-    UserPoint chargePoint(long userId, long amount);
+    CompletableFuture<UserPoint> chargePointAsync(long userId, long amount);
 
-    UserPoint usePoint(long userId, long amount);
+    CompletableFuture<UserPoint> usePointAsync(long userId, long amount);
 
 }
