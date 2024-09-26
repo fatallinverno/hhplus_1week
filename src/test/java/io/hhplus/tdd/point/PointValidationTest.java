@@ -42,4 +42,17 @@ public class PointValidationTest {
 
     }
 
+    @DisplayName("충전 포인트 맥스")
+    @Test
+    void testMaxPointChk() {
+        //Given
+        long baseAmount = 9000L;
+        long chargeAmount = 3000L;
+        long sumAmouunt = baseAmount + chargeAmount;
+        long maxPointAmount = 10000L;
+
+        //When & Then
+        assertDoesNotThrow(() -> pointValidation.validateMaxPoint(sumAmouunt, maxPointAmount));
+    }
+
 }
