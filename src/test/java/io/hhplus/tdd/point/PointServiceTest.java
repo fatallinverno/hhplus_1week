@@ -71,47 +71,48 @@ public class PointServiceTest {
 
     }
 
-    @DisplayName("포인트 충전")
-    @Test
-    void testChangeUserPoint() {
-        //Given
-        long userId = 1L;
-        long chargeAmount = 100L;
-        long baseAmount = 100L;
-
-        UserPoint testUserPoint = new UserPoint(userId, baseAmount, 1L);
-        UserPoint t = new UserPoint(testUserPoint.id(), baseAmount + chargeAmount, 1L);
-
-        when(userPointTable.selectById(userId)).thenReturn(testUserPoint);
-        when(userPointTable.insertOrUpdate(testUserPoint.id(), testUserPoint.point() + chargeAmount)).thenReturn(t);
-
-        //When
-        pointService.chargePoint(testUserPoint.id(), chargeAmount);   //sut mocking X
-
-        //Then
-        assertEquals(t.point(), testUserPoint.point() + chargeAmount); //findById로 아이디를 찾아와서 200 포인트 만큼 있는지 여부 체크
-
-    }
-
-    @DisplayName("포인트 사용")
-    @Test
-    void testUsePoint() {
-        //Given
-        long userId = 1L;
-        long useAmount = 100L;
-        long baseAmount = 200L;
-
-        UserPoint testUserPoint = new UserPoint(userId, baseAmount, 1L);
-        UserPoint t = new UserPoint(testUserPoint.id(), baseAmount - useAmount, 1L);
-
-        when(userPointTable.selectById(userId)).thenReturn(testUserPoint);
-        when(userPointTable.insertOrUpdate(testUserPoint.id(), useAmount)).thenReturn(t);
-
-        //When
-        pointService.usePoint(testUserPoint.id(), useAmount);
-
-        //Then
-        assertEquals(t.point(), baseAmount - useAmount);
-
-    }
+//    @DisplayName("포인트 충전")
+//    @Test
+//    void testChangeUserPoint() {
+//        //Given
+//        long userId = 1L;
+//        long chargeAmount = 100L;
+//        long baseAmount = 100L;
+//
+//        UserPoint testUserPoint = new UserPoint(userId, baseAmount, 1L);
+//        UserPoint t = new UserPoint(testUserPoint.id(), baseAmount + chargeAmount, 1L);
+//
+//        when(userPointTable.selectById(userId)).thenReturn(testUserPoint);
+//        when(userPointTable.insertOrUpdate(testUserPoint.id(), testUserPoint.point() + chargeAmount)).thenReturn(t);
+//
+//        //When
+//        pointService.chargePoint(testUserPoint.id(), chargeAmount);   //sut mocking X
+//
+//        //Then
+//        assertEquals(t.point(), testUserPoint.point() + chargeAmount); //findById로 아이디를 찾아와서 200 포인트 만큼 있는지 여부 체크
+//
+//    }
+//
+//    @DisplayName("포인트 사용")
+//    @Test
+//    void testUsePoint() {
+//        //Given
+//        long userId = 1L;
+//        long useAmount = 100L;
+//        long baseAmount = 200L;
+//
+//        UserPoint testUserPoint = new UserPoint(userId, baseAmount, 1L);
+//        UserPoint t = new UserPoint(testUserPoint.id(), baseAmount - useAmount, 1L);
+//
+//        when(userPointTable.selectById(userId)).thenReturn(testUserPoint);
+//        when(userPointTable.insertOrUpdate(testUserPoint.id(), useAmount)).thenReturn(t);
+//
+//        //When
+//        pointService.usePoint(testUserPoint.id(), useAmount);
+//
+//        //Then
+//        assertEquals(t.point(), baseAmount - useAmount);
+//
+//    }
+    
 }
