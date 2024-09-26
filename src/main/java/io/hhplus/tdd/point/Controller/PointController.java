@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/point")
@@ -38,15 +39,15 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public UserPoint charge(@PathVariable long id, @RequestBody long amount) {
-        return pointService.chargePoint(id, amount);
+    public CompletableFuture<UserPoint> charge(@PathVariable long id, @RequestBody long amount) {
+        return pointService.chargePointAsync(id, amount);
     }
 
     /**
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public UserPoint use(@PathVariable long id, @RequestBody long amount) {
-        return pointService.usePoint(id, amount);
+    public CompletableFuture<UserPoint> use(@PathVariable long id, @RequestBody long amount) {
+        return pointService.usePointAsync(id, amount);
     }
 }
