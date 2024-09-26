@@ -79,7 +79,7 @@ public class PointServiceTest {
         long chargeAmount = 100L;
         long baseAmount = 100L;
 
-        UserPoint testUserPoint = new UserPoint(userId, 100L, 1L);
+        UserPoint testUserPoint = new UserPoint(userId, baseAmount, 1L);
         UserPoint t = new UserPoint(testUserPoint.id(), baseAmount + chargeAmount, 1L);
 
         when(userPointTable.selectById(userId)).thenReturn(testUserPoint);
@@ -89,7 +89,7 @@ public class PointServiceTest {
         pointService.chargePoint(testUserPoint.id(), chargeAmount);   //sut mocking X
 
         //Then
-        assertEquals(t.point(), 200L); //findById로 아이디를 찾아와서 200 포인트 만큼 있는지 여부 체크
+        assertEquals(t.point(), testUserPoint.point() + chargeAmount); //findById로 아이디를 찾아와서 200 포인트 만큼 있는지 여부 체크
 
     }
 
@@ -111,7 +111,7 @@ public class PointServiceTest {
         pointService.usePoint(testUserPoint.id(), useAmount);
 
         //Then
-        assertEquals(t.point(), 100L);
+        assertEquals(t.point(), baseAmount - useAmount);
 
     }
 }
