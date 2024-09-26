@@ -4,6 +4,7 @@ import io.hhplus.tdd.PointValidation;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.PointHistory;
+import io.hhplus.tdd.point.PointPolicy;
 import io.hhplus.tdd.point.TransactionType;
 import io.hhplus.tdd.point.UserPoint;
 
@@ -14,11 +15,13 @@ public class PointServiceImpl implements PointService {
     private final UserPointTable userPointTable;
     private final PointHistoryTable pointHistoryTable;
     private final PointValidation pointValidation;
+    private final PointPolicy pointPolicy;
 
-    public PointServiceImpl(UserPointTable userPointTable, PointHistoryTable pointHistoryTable, PointValidation pointValidation) {
+    public PointServiceImpl(UserPointTable userPointTable, PointHistoryTable pointHistoryTable, PointValidation pointValidation, PointPolicy pointPolicy) {
         this.userPointTable = userPointTable;
         this.pointHistoryTable = pointHistoryTable;
         this.pointValidation = pointValidation;
+        this.pointPolicy = pointPolicy;
     }
 
     public UserPoint userPoint(long userId) {
@@ -38,7 +41,10 @@ public class PointServiceImpl implements PointService {
         pointValidation.validateChargeAmount(amount);
 
         UserPoint userInfo = userPoint(userId);
+        long maxPoint = pointPolicy.getMaxPointLimit();
         long updatePoint = userInfo.point() + amount;
+
+        pointValidation.validateMaxPoint(updatePoint, maxPoint);
 
         UserPoint updateUserPoint = userPointTable.insertOrUpdate(userId, updatePoint);
 
