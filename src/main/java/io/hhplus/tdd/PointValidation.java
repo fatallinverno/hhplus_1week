@@ -1,5 +1,8 @@
 package io.hhplus.tdd;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class PointValidation {
 
     public void validateUserId(Long userId) {
