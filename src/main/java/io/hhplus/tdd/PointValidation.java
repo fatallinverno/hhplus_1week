@@ -20,4 +20,10 @@ public class PointValidation {
         }
     }
 
+    public void validateMaxPoint(long sumPoint, long maxPointLimit) {
+        if (sumPoint > maxPointLimit) {
+            throw new IllegalArgumentException("최대 포인트 한도를 초과했습니다. 한도: " + maxPointLimit);
+        }
+    }
+
 }
